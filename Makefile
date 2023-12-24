@@ -1,7 +1,7 @@
 CXX_COMPILER=nvcc
-SOURCE_FILES=cartpole/cartpole.cu cartpole/gpu.cu cartpole/image.cu
-INCLUDE_PATHS=-I/home/animesh/Code/Tutorials/cuda-cartpole/deps/opencv/include/
-LINKED_LIBRARIES=-lcudart -lnppc -lnppc_static -lnppisu_static -lnppif_static
+SOURCE_FILES=cartpole/cartpole.cu cartpole/gpu.cu cartpole/image.cu cartpole/generate.cu
+INCLUDE_PATHS=-I/usr/include/opencv4/
+LINKED_LIBRARIES=-lcudart -lnppc -lnppc_static -lnppisu_static -lnppif_static -lfreeimageplus -lopencv_core -lopencv_imgcodecs -lopencv_highgui
 OUTPUT_EXECUTABLE=cartpole.out
 
 build:

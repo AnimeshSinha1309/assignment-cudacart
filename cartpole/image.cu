@@ -1,6 +1,8 @@
 #include "image.hu"
 
 #include <iostream>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 namespace CudaProj::Cartpole
 {
@@ -12,7 +14,7 @@ CpuImage::CpuImage(int rows, int cols)
     mPitch = mCols * sizeof(Npp8u) * 3;
 }
 
-CpuImage::CpuImage(std::vector<std::vector<std::array<Npp8u, 3>>> image)
+CpuImage::CpuImage(ImageMatrix image)
 {
     CpuImage(image.size(), image[0].size());
     for (int i = 0; i < mRows; i++)
@@ -76,9 +78,9 @@ std::pair<int, int> CudaImage::image_size()
     return {mRows, mCols};
 }
 
-std::vector<std::vector<std::array<Npp8u, 3>>> CpuImage::to_matrix()
+ImageMatrix CpuImage::to_matrix()
 {
-    auto matrix = std::vector<std::vector<std::array<Npp8u, 3>>>(mRows, std::vector<std::array<Npp8u, 3>>(mCols));
+    auto matrix = ImageMatrix(mRows, std::vector<std::array<Npp8u, 3>>(mCols));
     for (int i = 0; i < mRows; i++)
     {
         for (int j = 0; j < mCols; j++)
@@ -89,6 +91,20 @@ std::vector<std::vector<std::array<Npp8u, 3>>> CpuImage::to_matrix()
         }
     }
     return matrix;
+}
+
+void save_image(ImageMatrix image)
+{
+    cv::Mat output(image.size(), image[0].size(), CV_8UC3);
+    for (int row = 0; row < output.rows; ++row) {
+        for (int col = 0; col < output.cols; ++col) {
+            cv::Vec3b& pixel = output.at<cv::Vec3b>(row, col);
+            pixel[0] = image[row][col][0];
+            pixel[1] = image[row][col][1];
+            pixel[2] = image[row][col][2];
+        }
+    }
+    cv::imwrite("cartpole_image.png", output);
 }
 
 }

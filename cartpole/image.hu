@@ -10,9 +10,10 @@
 namespace CudaProj::Cartpole
 {
 
+using ImageMatrix = std::vector<std::vector<std::array<Npp8u, 3>>>;
+
 class CudaImage;
 class CpuImage;
-
 
 class CudaImage
 {
@@ -42,13 +43,15 @@ class CpuImage
 
 public:
     CpuImage(int rows, int cols);
-    CpuImage(std::vector<std::vector<std::array<Npp8u, 3>>> image);
+    CpuImage(ImageMatrix image);
     CpuImage(CudaImage image);
     ~CpuImage();
 
-    std::vector<std::vector<std::array<Npp8u, 3>>> to_matrix();
+    ImageMatrix to_matrix();
 
     friend class CudaImage;
 };
+
+void save_image(ImageMatrix image);
 
 }
