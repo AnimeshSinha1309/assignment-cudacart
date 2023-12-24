@@ -20,13 +20,14 @@ class CudaImage
     int mRows = 0;
     int mCols = 0;
     int mPitch = 0;
-public:
 
+public:
     CudaImage(int width, int height);
     CudaImage(CpuImage image);
     ~CudaImage();
 
-    void color_red();
+    Npp8u* image_ptr();
+    std::pair<int, int> image_size();
 
     friend class CpuImage;
 };
@@ -44,6 +45,8 @@ public:
     CpuImage(std::vector<std::vector<std::array<Npp8u, 3>>> image);
     CpuImage(CudaImage image);
     ~CpuImage();
+
+    std::vector<std::vector<std::array<Npp8u, 3>>> to_matrix();
 
     friend class CudaImage;
 };
