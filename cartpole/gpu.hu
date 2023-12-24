@@ -1,0 +1,22 @@
+#pragma once
+
+namespace CudaProj::Cartpole
+{
+
+inline void check_cuda_error(
+    cudaError_t error,
+    char const *const func,
+    const char *const file,
+    int const line
+);
+inline bool check_cuda_capabilities(
+    int major_version,
+    int minor_version
+);
+
+#define CHECK_CUDA_ERROR(val) check_cuda_error((val), #val, __FILE__, __LINE__)
+
+int initialize_gpu();
+bool print_cuda_info();
+
+}
