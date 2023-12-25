@@ -8,5 +8,6 @@ namespace CudaProj::Cartpole
 {
 
 __global__ void color_background(Npp8u* ptr, int rows, int cols);
+__host__ void draw_scene(ImageMatrix& cartpole, int i, int j);
 
 }

@@ -18,48 +18,8 @@ int main(int argc, char** argv)
 
     ImageMatrix cartpole(1000, ImageRow(1000));
     for (int i = 0; i < 1000; i++)
-    {
         for (int j = 0; j < 1000; j++)
-        {
-            cartpole[i][j][0] = 255;
-            cartpole[i][j][1] = 255;
-            cartpole[i][j][2] = 255;
-        }
-    }
-    for (int i = 800; i < 840; i++)
-    {
-        for (int j = 0; j < 1000; j++)
-        {
-            cartpole[i][j][0] = 0;
-            cartpole[i][j][1] = 0;
-            cartpole[i][j][2] = 0;
-        }
-    }
-    for (int i = 0; i < 1000; i++)
-    {
-        for (int j = 0; j < 1000; j++)
-        {
-            std::pair<double, double> r = {i - 710, j - 500};
-            std::pair<double, double> u = {sin(30), cos(30)};
-            int cl = r.first * u.first + r.second * u.second;
-            int cw = r.second * u.first - r.first * u.second;
-            if (cl > 0 && cl < 500 && cw > -10 && cw < 10)
-            {
-                cartpole[i][j][0] = 0;
-                cartpole[i][j][1] = 0;
-                cartpole[i][j][2] = 0;
-            }
-        }
-    }
-    for (int i = 700; i < 800; i++)
-    {
-        for (int j = 400; j < 600; j++)
-        {
-            cartpole[i][j][0] = 53;
-            cartpole[i][j][1] = 69;
-            cartpole[i][j][2] = 149;
-        }
-    }
+            draw_scene(cartpole, i, j);
 
     CpuImage o_image(cartpole);
     CudaImage d_image(o_image);
