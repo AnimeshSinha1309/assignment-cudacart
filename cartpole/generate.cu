@@ -4,7 +4,7 @@
 namespace CudaProj::Cartpole
 {
 
-__global__ void color_red(Npp8u* ptr, int rows, int cols)
+__global__ void color_background(Npp8u* ptr, int rows, int cols)
 {
     for (int i = 0; i < rows; i++)
     {

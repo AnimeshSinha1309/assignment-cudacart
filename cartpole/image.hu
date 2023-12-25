@@ -11,6 +11,7 @@ namespace CudaProj::Cartpole
 {
 
 using ImageMatrix = std::vector<std::vector<std::array<Npp8u, 3>>>;
+using ImageRow = std::vector<std::array<Npp8u, 3>>;
 
 class CudaImage;
 class CpuImage;

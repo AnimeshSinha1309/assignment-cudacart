@@ -7,6 +7,8 @@
 namespace CudaProj::Cartpole
 {
 
+// CPU image functions
+
 CpuImage::CpuImage(int rows, int cols)
     : mRows(rows), mCols(cols)
 {
@@ -14,9 +16,8 @@ CpuImage::CpuImage(int rows, int cols)
     mPitch = mCols * sizeof(Npp8u) * 3;
 }
 
-CpuImage::CpuImage(ImageMatrix image)
+CpuImage::CpuImage(ImageMatrix image) : CpuImage(image.size(), image[0].size())
 {
-    CpuImage(image.size(), image[0].size());
     for (int i = 0; i < mRows; i++)
     {
         for (int j = 0; j < mCols; j++)
@@ -28,10 +29,8 @@ CpuImage::CpuImage(ImageMatrix image)
     }
 }
 
-CpuImage::CpuImage(CudaImage image) : mRows(image.mRows), mCols(image.mCols)
+CpuImage::CpuImage(CudaImage image) : CpuImage(image.mRows, image.mCols)
 {
-    mImage = (Npp8u*) malloc(sizeof(Npp8u) * mCols * mRows * 3);
-    mPitch = image.mPitch;
     cudaError_t eResult = cudaMemcpy2D(
         mImage, mPitch, image.mImage, image.mPitch,
         mRows * sizeof(Npp8u), mCols, cudaMemcpyDeviceToHost);
@@ -44,8 +43,25 @@ CpuImage::CpuImage(CudaImage image) : mRows(image.mRows), mCols(image.mCols)
 
 CpuImage::~CpuImage()
 {
-    free(mImage);
+    // free(mImage);
 }
+
+ImageMatrix CpuImage::to_matrix()
+{
+    auto matrix = ImageMatrix(mRows, std::vector<std::array<Npp8u, 3>>(mCols));
+    for (int i = 0; i < mRows; i++)
+    {
+        for (int j = 0; j < mCols; j++)
+        {
+            matrix[i][j][0] = mImage[(i * mCols + j) * 3 + 0];
+            matrix[i][j][1] = mImage[(i * mCols + j) * 3 + 1];
+            matrix[i][j][2] = mImage[(i * mCols + j) * 3 + 2];
+        }
+    }
+    return matrix;
+}
+
+// CUDA image functions
 
 CudaImage::CudaImage(int width, int height)
     : mRows(width), mCols(height)
@@ -53,9 +69,8 @@ CudaImage::CudaImage(int width, int height)
     mImage = nppiMalloc_8u_C3(mRows, mCols, &mPitch);
 }
 
-CudaImage::CudaImage(CpuImage image) : mRows(image.mRows), mCols(image.mCols)
+CudaImage::CudaImage(CpuImage image) : CudaImage(image.mRows, image.mCols)
 {
-    mImage = nppiMalloc_8u_C3(mRows, mCols, &mPitch);
     cudaError_t eResult = cudaMemcpy2D(
         mImage, mPitch, image.mImage, image.mPitch,
         mRows * sizeof(Npp8u), mCols, cudaMemcpyHostToDevice);
@@ -76,21 +91,6 @@ Npp8u* CudaImage::image_ptr()
 std::pair<int, int> CudaImage::image_size()
 {
     return {mRows, mCols};
-}
-
-ImageMatrix CpuImage::to_matrix()
-{
-    auto matrix = ImageMatrix(mRows, std::vector<std::array<Npp8u, 3>>(mCols));
-    for (int i = 0; i < mRows; i++)
-    {
-        for (int j = 0; j < mCols; j++)
-        {
-            matrix[i][j][0] = mImage[(i * mCols + j) * 3 + 0];
-            matrix[i][j][1] = mImage[(i * mCols + j) * 3 + 1];
-            matrix[i][j][2] = mImage[(i * mCols + j) * 3 + 2];
-        }
-    }
-    return matrix;
 }
 
 void save_image(ImageMatrix image)
